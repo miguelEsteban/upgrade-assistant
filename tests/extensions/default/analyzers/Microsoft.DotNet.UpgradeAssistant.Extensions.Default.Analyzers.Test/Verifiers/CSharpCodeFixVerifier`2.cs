@@ -55,8 +55,6 @@ namespace Analyzer1.Test
                 FixedCode = fixedSource,
             };
 
-            test.ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net48.Default;
-
             test.ExpectedDiagnostics.AddRange(expected);
             await test.RunAsync(CancellationToken.None);
         }
