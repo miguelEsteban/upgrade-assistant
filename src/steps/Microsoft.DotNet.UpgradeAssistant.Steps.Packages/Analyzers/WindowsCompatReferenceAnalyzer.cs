@@ -25,7 +25,12 @@ namespace Microsoft.DotNet.UpgradeAssistant.Steps.Packages.Analyzers
 
         public async Task<PackageAnalysisState> AnalyzeAsync(IProject project, PackageAnalysisState state, CancellationToken token)
         {
-            if (!project.Required().TFM.IsWindows)
+            if (project is null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
+            if (!project.TFM.IsWindows)
             {
                 return state;
             }
@@ -35,7 +40,7 @@ namespace Microsoft.DotNet.UpgradeAssistant.Steps.Packages.Analyzers
                 throw new ArgumentNullException(nameof(state));
             }
 
-            if (project.IsTransitivelyAvailable(PackageName))
+            if (project.NuGetReferences.IsTransitivelyAvailable(PackageName))
             {
                 _logger.LogDebug("{PackageName} already referenced transitively", PackageName);
                 return state;

@@ -187,9 +187,12 @@ namespace Microsoft.DotNet.UpgradeAssistant.MSBuild.Tests
             var projectFile = mock.Mock<IProjectFile>();
             projectFile.Setup(f => f.IsSdk).Returns(false);
 
+            var nugetPackages = mock.Mock<INuGetReferences>();
+            nugetPackages.Setup(p => p.TransitivePackageReferences).Returns(dependencies);
+
             var project = mock.Mock<IProject>();
             project.Setup(p => p.GetFile()).Returns(projectFile.Object);
-            project.Setup(p => p.TransitivePackageReferences).Returns(dependencies);
+            project.Setup(p => p.NuGetReferences).Returns(nugetPackages.Object);
 
             var componentIdentifier = mock.Create<ComponentIdentifier>();
 

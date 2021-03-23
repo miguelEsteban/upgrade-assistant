@@ -18,15 +18,9 @@ namespace Microsoft.DotNet.UpgradeAssistant
 
         IEnumerable<IProject> ProjectReferences { get; }
 
-        NugetPackageFormat PackageReferenceFormat { get; }
-
         IEnumerable<Reference> FrameworkReferences { get; }
 
-        IEnumerable<NuGetReference> PackageReferences { get; }
-
-        IEnumerable<NuGetReference> TransitivePackageReferences { get; }
-
-        string? LockFilePath { get; }
+        INuGetReferences NuGetReferences { get; }
 
         IEnumerable<Reference> References { get; }
 

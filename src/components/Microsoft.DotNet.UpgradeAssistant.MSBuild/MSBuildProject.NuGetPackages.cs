@@ -4,21 +4,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 
-namespace Microsoft.DotNet.UpgradeAssistant.Steps.Packages.Analyzers
+namespace Microsoft.DotNet.UpgradeAssistant.MSBuild
 {
-    internal static class TransitiveDependencyExtensions
+    internal partial class MSBuildProject : INuGetReferences
     {
-        public static bool IsTransitivelyAvailable(this IProject project, string packageName)
-            => project.ContainsDependency(d => string.Equals(packageName, d.Id, StringComparison.OrdinalIgnoreCase));
+        public INuGetReferences NuGetReferences => this;
 
-        public static bool IsTransitiveDependency(this IProject project, NuGetReference nugetReference)
-            => project.ContainsDependency(d => d.ReferenceSatisfiesDependency(nugetReference, true));
+        public bool IsTransitivelyAvailable(string packageName)
+         => ContainsDependency(d => string.Equals(packageName, d.Id, StringComparison.OrdinalIgnoreCase));
 
-        private static bool ReferenceSatisfiesDependency(this PackageDependency dependency, NuGetReference packageReference, bool minVersionMatchOnly)
+        public bool IsTransitiveDependency(NuGetReference nugetReference)
+            => ContainsDependency(d => ReferenceSatisfiesDependency(d, nugetReference, true));
+
+        private static bool ReferenceSatisfiesDependency(PackageDependency dependency, NuGetReference packageReference, bool minVersionMatchOnly)
         {
             // If the dependency's name doesn't match the reference's name, return false
             if (!dependency.Id.Equals(packageReference.Name, StringComparison.OrdinalIgnoreCase))
@@ -54,13 +57,13 @@ namespace Microsoft.DotNet.UpgradeAssistant.Steps.Packages.Analyzers
             return true;
         }
 
-        private static bool ContainsDependency(this IProject project, Func<PackageDependency, bool> filter)
-            => project.GetAllDependencies().Any(l => l.Dependencies.Any(d => filter(d)));
+        private bool ContainsDependency(Func<PackageDependency, bool> filter)
+            => GetAllDependencies().Any(l => l.Dependencies.Any(d => filter(d)));
 
-        private static IEnumerable<LockFileTargetLibrary> GetAllDependencies(this IProject project)
+        private IEnumerable<LockFileTargetLibrary> GetAllDependencies()
         {
-            var tfm = NuGetFramework.Parse(project.TFM.Name);
-            var lockFileTarget = LockFileUtilities.GetLockFile(project.LockFilePath, NuGet.Common.NullLogger.Instance)
+            var tfm = NuGetFramework.Parse(TFM.Name);
+            var lockFileTarget = LockFileUtilities.GetLockFile(LockFilePath, NuGet.Common.NullLogger.Instance)
                 .Targets
                 .First(t => t.TargetFramework.DotNetFrameworkName.Equals(tfm.DotNetFrameworkName, StringComparison.Ordinal));
 
