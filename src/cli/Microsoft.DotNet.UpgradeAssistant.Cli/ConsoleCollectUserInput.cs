@@ -29,7 +29,7 @@ namespace Microsoft.DotNet.UpgradeAssistant.Cli
             return Task.FromResult(_io.Input.ReadLine());
         }
 
-        public Task<T> ChooseAsync<T>(string message, IEnumerable<T> commands, CancellationToken token)
+        public Task<T> ChooseAsync<T>(string message, IEnumerable<T> commands, CancellationToken token, UpgradeStep? currentStep = null)
             where T : UpgradeCommand
         {
             if (commands is null)

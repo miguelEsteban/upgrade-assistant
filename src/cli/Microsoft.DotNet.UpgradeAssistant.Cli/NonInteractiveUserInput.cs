@@ -23,9 +23,18 @@ namespace Microsoft.DotNet.UpgradeAssistant.Cli
             throw new NotImplementedException("User input cannot be selected in non-interactive mode");
         }
 
-        public Task<T> ChooseAsync<T>(string message, IEnumerable<T> commands, CancellationToken token)
+        public Task<T> ChooseAsync<T>(string message, IEnumerable<T> commands, CancellationToken token, UpgradeStep? currentStep = null)
             where T : UpgradeCommand
-            => Task.FromResult(commands.First(c => c.IsEnabled));
+        {
+            if (currentStep != null && currentStep.Id != "Microsoft.DotNet.UpgradeAssistant.Steps.ProjectFormat.SetTFMStep")
+            {
+                return Task.FromResult(commands.First(c => c.IsEnabled));
+            }
+            else
+            {
+                return Task.FromResult(commands.Last(c => c.IsEnabled));
+            }
+        }
 
         public async Task<bool> WaitToProceedAsync(CancellationToken token)
         {

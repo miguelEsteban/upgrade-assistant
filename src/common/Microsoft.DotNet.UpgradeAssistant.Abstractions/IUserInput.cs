@@ -11,7 +11,7 @@ namespace Microsoft.DotNet.UpgradeAssistant
     {
         Task<string?> AskUserAsync(string prompt);
 
-        Task<T> ChooseAsync<T>(string message, IEnumerable<T> commands, CancellationToken token)
+        Task<T> ChooseAsync<T>(string message, IEnumerable<T> commands, CancellationToken token, UpgradeStep? currentStep = null)
             where T : UpgradeCommand;
 
         Task<bool> WaitToProceedAsync(CancellationToken token);

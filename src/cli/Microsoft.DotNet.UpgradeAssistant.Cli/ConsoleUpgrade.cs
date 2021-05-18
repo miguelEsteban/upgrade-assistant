@@ -60,7 +60,7 @@ namespace Microsoft.DotNet.UpgradeAssistant.Cli
                     _io.Output.WriteLine();
 
                     var commands = _commandProvider.GetCommands(step, context);
-                    var command = await _input.ChooseAsync("Choose a command:", commands, token);
+                    var command = await _input.ChooseAsync("Choose a command:", commands, token, step);
 
                     // TODO : It might be nice to allow commands to show more details by having a 'status' property
                     //        that can be shown here. Also, commands currently only return bools but, in the future,
